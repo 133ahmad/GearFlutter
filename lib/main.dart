@@ -3,7 +3,9 @@ import 'package:gear/views/registration.dart';
 import 'package:gear/views/login.dart';
 import 'package:gear/views/home_screen.dart';
 import 'package:gear/views/mechanic_home.dart';
+import 'package:gear/views/ServiceRequestScreen.dart'; // Import the service request screen
 import 'package:get/get.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -20,10 +22,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(), // Login route
         '/register': (context) => RegistrationPage(), // Registration route
-        '/first':(context) => HomeScreen(),
-        '/mechanic':(context)=> MechanicHomeScreen(),
+        '/first': (context) => HomeScreen(), // Home screen route
+        '/mechanic': (context) => MechanicHomeScreen(), // Mechanic home screen route
+        '/service_requests': (context) => ServiceRequestScreen(), // New route for service requests screen
       },
     );
   }
 }
-

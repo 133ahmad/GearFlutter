@@ -4,7 +4,11 @@ import 'dart:convert';
 
 class LoginController {
   Future<void> handleLogin(BuildContext context, String phone, String password, String selectedRole) async {
+<<<<<<< HEAD
+    String apiUrl = "http://127.0.0.1:8000/api/login";
+=======
     String apiUrl = "http://your-laravel-api.com/api/login";
+>>>>>>> 11521f51f2daff4bad72cb1b9b70ca6a7fd7cf8f
     /// ///////////////// Replace with your actual API URL
 
     try {

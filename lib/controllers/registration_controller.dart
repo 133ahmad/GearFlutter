@@ -12,7 +12,11 @@ class RegistrationController {
       String password,
       String role,
       ) async {
+<<<<<<< HEAD
+    String apiUrl = "http://127.0.0.1:8000/api/register"; // Replace with actual Laravel API URL
+=======
     String apiUrl = "http://your-laravel-api.com/api/register"; // Replace with actual Laravel API URL
+>>>>>>> 11521f51f2daff4bad72cb1b9b70ca6a7fd7cf8f
         /////////////////////////////////////////////////////////////
     try {
       final response = await http.post(
@@ -34,9 +38,15 @@ class RegistrationController {
 
         // Navigate based on role
         if (role == "Customer") {
+<<<<<<< HEAD
+          Navigator.pushReplacementNamed(context, '/first');
+        } else if (role == "Mechanic") {
+          Navigator.pushReplacementNamed(context, '/mechanic');
+=======
           Navigator.pushReplacementNamed(context, '/customer');
         } else if (role == "Mechanic") {
           Navigator.pushReplacementNamed(context, '/first');
+>>>>>>> 11521f51f2daff4bad72cb1b9b70ca6a7fd7cf8f
         }
       } else {
         _showErrorDialog(context, data['message']);
