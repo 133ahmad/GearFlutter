@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gear/views/EmergencyRequest.dart';
 import 'package:gear/views/registration.dart';
 import 'package:gear/views/login.dart';
 import 'package:gear/views/home_screen.dart';
@@ -25,6 +26,8 @@ class MyApp extends StatelessWidget {
         '/first': (context) => HomeScreen(), // Home screen route
         '/mechanic': (context) => MechanicHomeScreen(), // Mechanic home screen route
         '/service_requests': (context) => ServiceRequestScreen(), // New route for service requests screen
+        '/Emergency':(context)=>EmergencyRequestScreen(),
+
       },
     );
   }

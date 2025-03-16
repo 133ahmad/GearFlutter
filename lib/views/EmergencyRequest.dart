@@ -22,15 +22,22 @@ class EmergencyRequestScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            TextField(
-              controller: controller.locationController,
+
+            // Live location display
+            Obx(() => TextField(
+              readOnly: true,
               decoration: InputDecoration(
-                labelText: 'Location',
+                labelText: 'Location (Auto-Fetched)',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.location_on),
+                hintText: controller.currentLocation.value.isEmpty
+                    ? 'Fetching location...'
+                    : controller.currentLocation.value,
               ),
-            ),
+            )),
             SizedBox(height: 10),
+
+            // Emergency details input
             TextField(
               controller: controller.detailsController,
               maxLines: 4,
@@ -41,6 +48,8 @@ class EmergencyRequestScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+
+            // Submit button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
