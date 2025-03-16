@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
                 validator: (value) {
-                  return loginController.validatePhone(value);
+                //  return loginController.validatePhone(value);
                 },
               ),
               // Password input field
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
-                  return loginController.validatePassword(value);
+             //     return loginController.validatePassword(value);
                 },
               ),
               SizedBox(height: 20),

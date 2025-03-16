@@ -6,5 +6,5 @@ class AppRoute{
   static const String serviceRequests = '/service_requests';
   static const String chat = '/chat';
   static const String editProfile = '/editProfile';
-
+  static const String Emergency='/emergency';
 }

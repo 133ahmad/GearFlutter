@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gear/views/EmergencyRequest.dart';
 import 'package:gear/views/ServiceRequestScreen.dart';
 import 'package:gear/views/registration.dart';
 import 'package:gear/views/login.dart';
@@ -7,6 +8,7 @@ import 'package:gear/views/mechanic_home.dart';
 import 'package:gear/views/chatScreen.dart';
 import 'package:gear/views/EditProfileScreen.dart';
 import 'package:get/get.dart';
+import 'package:gear/views/EmergencyRequest.dart';
 
 class AppRoute {
   static const String registration = '/';
@@ -16,6 +18,7 @@ class AppRoute {
   static const String serviceRequests = '/service_requests';
   static const String chat = '/chat';
   static const String editProfile = '/editProfile';
+  static const String Emergency='/Emergency';
 
   static final List<GetPage> pages = [
     GetPage(
@@ -45,6 +48,9 @@ class AppRoute {
     GetPage(
       name: AppRoute.editProfile,
       page: () => EditProfileScreen(),
+    ),
+    GetPage(name: Emergency, page:
+        ()=>EmergencyRequestScreen()
     ),
   ];
 }
