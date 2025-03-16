@@ -6,6 +6,9 @@ import 'package:gear/views/home_screen.dart';
 import 'package:gear/views/mechanic_home.dart';
 import 'package:gear/views/ServiceRequestScreen.dart'; // Import the service request screen
 import 'package:get/get.dart';
+import 'package:gear/views/chatScreen.dart';
+import 'package:gear/views/MyOrders.dart';
+import 'package:gear/views/OrderScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +30,10 @@ class MyApp extends StatelessWidget {
         '/mechanic': (context) => MechanicHomeScreen(), // Mechanic home screen route
         '/service_requests': (context) => ServiceRequestScreen(), // New route for service requests screen
         '/Emergency':(context)=>EmergencyRequestScreen(),
-
+        '/service_request': (context) => ServiceRequestScreen(), // New route for service requests screen
+        '/chat': (context) => ChatMessageItem(message: Get.arguments), // New route for chat screen'
+        '/myOrders': (context) => MyOrdersScreen(), // New route for my orders screen'
+        '/orders': (context) => OrdersScreen(), // New route for orders screen'
       },
     );
   }

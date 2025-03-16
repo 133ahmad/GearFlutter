@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Center(
               child: ElevatedButton(
-                onPressed: () => Get.toNamed(AppRoute.Emergency),
+                onPressed: () => Get.toNamed(AppRoute.emergency),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
@@ -82,8 +82,12 @@ class HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildButton('Schedule', Icons.calendar_today, () {}),
-                _buildButton('My Orders', Icons.receipt, () {}),
+                _buildButton('Schedule', Icons.calendar_today, () {
+                  Get.toNamed(AppRoute.serviceRequests);
+                }),
+                _buildButton('My Orders', Icons.receipt, () {
+                  Get.toNamed(AppRoute.myOrders);
+                }),
               ],
             ),
           ],

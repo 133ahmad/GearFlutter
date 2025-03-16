@@ -8,7 +8,8 @@ import 'package:gear/views/mechanic_home.dart';
 import 'package:gear/views/chatScreen.dart';
 import 'package:gear/views/EditProfileScreen.dart';
 import 'package:get/get.dart';
-import 'package:gear/views/EmergencyRequest.dart';
+import 'package:gear/views/OrderScreen.dart';
+import 'package:gear/views/MyOrders.dart';
 
 class AppRoute {
   static const String registration = '/';
@@ -18,7 +19,10 @@ class AppRoute {
   static const String serviceRequests = '/service_requests';
   static const String chat = '/chat';
   static const String editProfile = '/editProfile';
-  static const String Emergency='/Emergency';
+  static const String emergency='/Emergency';
+  static const String myOrders='Myorders';
+  static const String orders='orders';
+
 
   static final List<GetPage> pages = [
     GetPage(
@@ -49,8 +53,13 @@ class AppRoute {
       name: AppRoute.editProfile,
       page: () => EditProfileScreen(),
     ),
-    GetPage(name: Emergency, page:
+    GetPage(name: emergency, page:
         ()=>EmergencyRequestScreen()
+    ),
+    GetPage(name: myOrders, page:
+        ()=>MyOrdersScreen()
+    ),GetPage(name: orders, page:
+        ()=>OrdersScreen()
     ),
   ];
 }
