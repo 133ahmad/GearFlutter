@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
         '/service_requests': (context) => ServiceRequestScreen(), // New route for service requests screen
         '/Emergency':(context)=>EmergencyRequestScreen(),
         '/service_request': (context) => ServiceRequestScreen(), // New route for service requests screen
-
+        '/Customerchat': (context) => ChatPage(), // New route for customer chat screen'
+        '/mechanicchat': (context) => ChatPage(), // New route for mechanic chat screen'
         '/myOrders': (context) => MyOrdersScreen(), // New route for my orders screen'
         '/orders': (context) => OrdersScreen(), // New route for orders screen'
         '/schedule_history': (context)=>ScheduleHistoryScreen(),

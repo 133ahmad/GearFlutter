@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gear/routes/AppPage.dart';
 import 'package:gear/views/EditProfileScreen.dart';
-import 'package:gear/views/ServiceRequestScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override

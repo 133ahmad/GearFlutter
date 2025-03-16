@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:gear/views/Customer_chat.dart';
-import 'package:gear/views/Mechanic_chat.dart';  // Import MechanicChatScreen
 import 'package:gear/views/EmergencyRequest.dart';
 import 'package:gear/views/ServiceRequestScreen.dart';
 import 'package:gear/views/registration.dart';
@@ -11,7 +9,8 @@ import 'package:gear/views/EditProfileScreen.dart';
 import 'package:gear/views/OrderScreen.dart';
 import 'package:gear/views/MyOrders.dart';
 import 'package:gear/views/schedule_history.dart';
-
+import 'package:gear/views/Customer_chat.dart';
+import 'package:gear/views/Mechanic_chat.dart';
 
 class AppRoute {
   static const String registration = '/';
