@@ -103,7 +103,6 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Image.asset('assets/images/car.png', width: 100, height: 60, fit: BoxFit.cover),
                       SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,21 +140,8 @@ class HomeScreen extends StatelessWidget {
               }),
             ),
             SizedBox(height: 10),
-            // My Cars Button
-            Center(
-              child: _buildButton('My Cars', Icons.directions_car, () {
-                print("Navigating to My Cars...");
-                Get.toNamed(AppRoute.Mycar);  // Navigate to AddCarScreen
-              }),
-            ),
-            SizedBox(height: 10),
             // Orders Button
-            Center(
-              child: _buildButton('Orders', Icons.shopping_cart, () {
-                print("Navigating to Orders...");
-                Get.toNamed(AppRoute.orders);  // Navigate to Orders page
-              }),
-            ),
+
           ],
         ),
       ),
