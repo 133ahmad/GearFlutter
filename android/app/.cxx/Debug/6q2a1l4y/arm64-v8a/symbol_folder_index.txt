@@ -1,0 +1,1 @@
+C:\Users\USER\AndroidStudioProjects\GearFlutter\build\app\intermediates\cxx\Debug\6q2a1l4y\obj\arm64-v8a
