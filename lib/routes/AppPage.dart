@@ -11,6 +11,7 @@ import 'package:gear/views/MyOrders.dart';
 import 'package:gear/views/schedule_history.dart';
 import 'package:gear/views/Customer_chat.dart';
 import 'package:gear/views/Mechanic_chat.dart';
+import 'package:gear/views/Mycar.dart';
 
 class AppRoute {
   static const String registration = '/';
@@ -25,6 +26,7 @@ class AppRoute {
   static const String myOrders = 'Myorders';
   static const String orders = 'orders';
   static const scheduleHistory = '/schedule-history';
+  static const String Mycar='/mycar';
 
   static final List<GetPage> pages = [
     GetPage(name: registration,
@@ -51,5 +53,7 @@ class AppRoute {
         page: () => OrdersScreen()),
     GetPage(name: scheduleHistory,
         page: () => ScheduleHistoryScreen()),
+    GetPage(name: Mycar,
+        page: () => AddCarScreen()),
   ];
 }

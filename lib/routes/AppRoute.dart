@@ -12,4 +12,5 @@ class AppRoute{
   static const scheduleHistory = '/schedule-history';
   static const String mechanicChat='/mechanicchat';
   static const String customerChat='/Customerchat';
+  static const String mycar='/mycar';
 }
