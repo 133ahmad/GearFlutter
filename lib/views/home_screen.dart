@@ -90,6 +90,12 @@ class HomeScreen extends StatelessWidget {
                 }),
               ],
             ),
+            SizedBox(height: 10),
+            Center(
+              child: _buildButton('Schedule History & Upcoming', Icons.event, () {
+                Get.toNamed(AppRoute.scheduleHistory);
+              }),
+            ),
           ],
         ),
       ),
@@ -117,7 +123,7 @@ class HomeScreen extends StatelessWidget {
         ],
         onTap: (index) {
           if (index == 0) {
-            Get.toNamed(AppRoute.chat);
+            Get.toNamed(AppRoute.customerChat);
           }
         },
       ),

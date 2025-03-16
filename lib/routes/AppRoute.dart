@@ -7,4 +7,9 @@ class AppRoute{
   static const String chat = '/chat';
   static const String editProfile = '/editProfile';
   static const String Emergency='/emergency';
+  static const String myOrders='Myorders';
+  static const String orders='orders';
+  static const scheduleHistory = '/schedule-history';
+  static const String mechanicChat='/mechanicchat';
+  static const String customerChat='/Customerchat';
 }
