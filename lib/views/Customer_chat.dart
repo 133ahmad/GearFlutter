@@ -1,22 +1,62 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gear/models/message_model.dart';
+import 'package:gear/controllers/chat_controller.dart';
 
-class ChatController extends GetxController {
-  var messages = <Message>[];
+class CustomerChatScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final ChatController controller = Get.put(ChatController()); // Ensure correct controller usage
 
-  // Function to send a message
-  void sendMessage(String text, String senderName, String senderRole) {
-    final timestamp = DateTime.now().toString();
-
-    // Add the new message to the list
-    messages.add(Message(
-      senderName: senderName,
-      senderRole: senderRole,
-      message: text,
-      timestamp: timestamp,
-    ));
-
-    // Update the state
-    update();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Customer Chat'),
+      ),
+      body: Column(
+        children: [
+          // Chat messages display
+          Expanded(
+            child: GetBuilder<ChatController>(  // Listens to changes in ChatController
+              builder: (_) {
+                return ListView.builder(
+                  itemCount: controller.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    if (message.senderRole == 'customer') {
+                      return ListTile(
+                        title: Text(message.senderName),
+                        subtitle: Text(message.message),
+                        trailing: Text(message.timestamp),
+                      );
+                    }
+                    return SizedBox.shrink(); // Don't show messages for non-customer roles
+                  },
+                );
+              },
+            ),
+          ),
+          // Text input to send message
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(hintText: 'Type a message...'),
+                    onChanged: (text) {},
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    // Send message as a customer
+                    controller.sendMessage("Customer's message"); // Sending message
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

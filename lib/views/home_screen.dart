@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gear/routes/AppPage.dart';
 import 'package:gear/views/EditProfileScreen.dart';
-import 'package:gear/views/Mycar.dart';
 import 'package:gear/models/car_model.dart';
+import 'package:gear/controllers/editprofile_controller.dart';
+import 'package:gear/controllers/car_controller.dart'; // Controller to manage car data
+
 class HomeScreen extends StatelessWidget {
-  Car? userCar;  // This will hold the car data
+  final EditProfileController profileController = Get.find(); // Access the controller
+  final CarController carController = Get.put(CarController()); // Manage car data
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +19,16 @@ class HomeScreen extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                print("Navigating to Edit Profile...");
-                Get.to(EditProfileScreen()); // Navigate to Edit Profile
+                Get.to(EditProfileScreen());
               },
-              child: CircleAvatar(
-                backgroundImage: AssetImage('assets/profile.jpg'),
-                radius: 18,
-              ),
+              child: Obx(() {
+                return CircleAvatar(
+                  backgroundImage: profileController.profileImage.value.isNotEmpty
+                      ? FileImage(File(profileController.profileImage.value))
+                      : AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                  radius: 18,
+                );
+              }),
             ),
             SizedBox(width: 10),
             Text('Home'),
@@ -31,7 +38,6 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              print("Logging out...");
               Get.offAllNamed(AppRoute.login);
             },
           ),
@@ -45,7 +51,6 @@ class HomeScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  print("Navigating to Emergency Request...");
                   Get.toNamed(AppRoute.emergency);
                 },
                 style: ElevatedButton.styleFrom(
@@ -59,89 +64,34 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            // If user has a car, show car info. Otherwise, show the "My Car" button
-            userCar == null
-                ? GestureDetector(
-              onTap: () {
-                print("Navigating to Add Car...");
-                Get.toNamed(AppRoute.Mycar);
-              },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('My Car', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Icon(Icons.add, size: 30, color: Colors.grey), // Placeholder icon for no car
-                        SizedBox(width: 10),
-                        Text('Tap to add your car', style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-                : Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Your Car', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${userCar!.make} ${userCar!.model} ${userCar!.year}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                          Text('${userCar!.fuelType}', style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+
+            // Car Section - Checks if the user has a car
+            Obx(() {
+              return carController.userCar.value == null
+                  ? _buildAddCarWidget()
+                  : _buildCarInfoWidget(carController.userCar.value!);
+            }),
+
             SizedBox(height: 20),
+
             // Buttons for Schedule, My Orders, and My Cars
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildButton('Schedule', Icons.calendar_today, () {
-                  print("Navigating to Schedule...");
                   Get.toNamed(AppRoute.serviceRequests);
                 }),
                 _buildButton('My Orders', Icons.receipt, () {
-                  print("Navigating to My Orders...");
                   Get.toNamed(AppRoute.myOrders);
                 }),
               ],
             ),
             SizedBox(height: 10),
-            // Schedule History & Upcoming
             Center(
               child: _buildButton('Schedule History & Upcoming', Icons.event, () {
-                print("Navigating to Schedule History...");
                 Get.toNamed(AppRoute.scheduleHistory);
               }),
             ),
-            SizedBox(height: 10),
-            // Orders Button
-
           ],
         ),
       ),
@@ -168,32 +118,90 @@ class HomeScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Orders'),
         ],
         onTap: (index) {
-          print("Bottom Navigation tapped at index $index");
           if (index == 0) {
-            Get.toNamed(AppRoute.customerChat);  // Navigate to Customer Chat
+            Get.toNamed(AppRoute.customerChat);
           } else if (index == 1) {
-            Get.toNamed(AppRoute.Mycar);  // Navigate to My Car
+            Get.toNamed(AppRoute.myCar);  // Corrected 'Mycar' to 'myCar'
           } else if (index == 2) {
-            Get.toNamed(AppRoute.orders);  // Navigate to Orders
+            Get.toNamed(AppRoute.orders);
           }
         },
       ),
     );
   }
 
+  // Widget to add a car
+  Widget _buildAddCarWidget() {
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(AppRoute.myCar);  // Corrected 'Mycar' to 'myCar'
+      },
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('My Car', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(Icons.add, size: 30, color: Colors.grey),
+                SizedBox(width: 10),
+                Text('Tap to add your car', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget to show car details
+  Widget _buildCarInfoWidget(Car car) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Your Car', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${car.make} ${car.model} ${car.year}',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text('${car.fuelType}', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Button builder
   Widget _buildButton(String text, IconData icon, VoidCallback onPressed) {
     return ElevatedButton.icon(
-      onPressed: () {
-        print("Button pressed: $text");
-        onPressed();
-      },
+      onPressed: onPressed,
       icon: Icon(icon),
       label: Text(text, textAlign: TextAlign.center),
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
         minimumSize: Size(140, 50),
       ),
     );

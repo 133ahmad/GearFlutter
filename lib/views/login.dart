@@ -1,12 +1,15 @@
+// screens/login_screen.dart
+
 import 'package:flutter/material.dart';
-import 'package:gear/controllers/login_controller.dart';
+import 'package:get/get.dart';
+import 'package:gear/controllers/login_controller.dart'; // Import the LoginController
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>(); // Form key for validation
   final TextEditingController phoneController = TextEditingController(); // Phone controller
   final TextEditingController passwordController = TextEditingController(); // Password controller
@@ -15,14 +18,28 @@ class _LoginPageState extends State<LoginPage> {
   String _selectedRole = 'Customer'; // Default role
 
   // Submit method to handle login
-  void _submit(BuildContext context) {
+  void _submit(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
-      loginController.handleLogin(
+      // For testing, use the handleLogin method (mock login)
+      await loginController.handleLogin(
         context,
         phoneController.text.trim(),
         passwordController.text.trim(),
         _selectedRole,
       );
+
+      // For real login (uncomment this when ready to test with real API)
+      // bool loginSuccess = await loginController.handleLoginReal(
+      //   context,
+      //   phoneController.text.trim(),
+      //   passwordController.text.trim(),
+      //   _selectedRole,
+      // );
+
+      // if (!loginSuccess) {
+      //   // Handle login failure
+      //   print("Login failed!");
+      // }
     }
   }
 
@@ -43,7 +60,10 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
                 validator: (value) {
-                //  return loginController.validatePhone(value);
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  return null;
                 },
               ),
               // Password input field
@@ -52,11 +72,13 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
-             //     return loginController.validatePassword(value);
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
                 },
               ),
               SizedBox(height: 20),
-
               // Role Selection
               Container(
                 padding: EdgeInsets.all(10),
