@@ -23,7 +23,7 @@ class _ServiceResponseScreenState extends State<ServiceResponseScreen> {
     // Add the request to the schedule
     scheduleController.addToSchedule(
       customerName: 'John Doe',
-      carDetails: 'Toyota Corolla 2020',
+      carDetails: 'Toyota Coro;la 2020',
       issue: 'Engine overheating',
       response: 'Accepted', // No text input, so we use a default response
     );
