@@ -46,6 +46,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.4.0
   geolocator: ^13.0.2
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -99,3 +100,7 @@ assets:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/GearUp.png"
