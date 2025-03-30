@@ -8,7 +8,7 @@ class ServiceResponseScreen extends StatefulWidget {
 }
 
 class _ServiceResponseScreenState extends State<ServiceResponseScreen> {
-  final ScheduleController scheduleController = Get.find(); // Access the ScheduleController
+  final ScheduleResponseController scheduleController = Get.find(); // Access the ScheduleController
   bool _isLoading = false; // Boolean to track loading state
 
   // Simulate accepting a service request (replace with your actual logic)
@@ -23,7 +23,7 @@ class _ServiceResponseScreenState extends State<ServiceResponseScreen> {
     // Add the request to the schedule
     scheduleController.addToSchedule(
       customerName: 'John Doe',
-      carDetails: 'Toyota Coro;la 2020',
+      carDetails: 'Toyota Corola 2020',
       issue: 'Engine overheating',
       response: 'Accepted', // No text input, so we use a default response
     );

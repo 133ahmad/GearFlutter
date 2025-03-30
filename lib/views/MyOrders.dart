@@ -8,16 +8,10 @@ class MyOrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My Orders'),
-      ),
+      appBar: AppBar(title: Text('My Orders')),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Obx(() {
-          if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
-          }
-
           if (controller.orders.isEmpty) {
             return Center(child: Text('No orders found.'));
           }
@@ -29,7 +23,7 @@ class MyOrdersScreen extends StatelessWidget {
               return Card(
                 child: ListTile(
                   title: Text(order.partName),
-                  subtitle: Text('Ordered on: ${order.orderDate}'),
+                  subtitle: Text('Ordered on: ${order.orderDate.toLocal()}'),
                   trailing: Text('\$${order.price}'),
                 ),
               );

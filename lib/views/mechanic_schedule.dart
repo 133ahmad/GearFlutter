@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gear/controllers/schedule_response_controller.dart'; // Import the ScheduleController
+import 'package:gear/controllers/schedule_response_controller.dart';
 
 class MechanicScheduleScreen extends StatelessWidget {
-  final ScheduleController scheduleController = Get.find(); // Access the ScheduleController
+  final ScheduleResponseController scheduleController = Get.put(ScheduleResponseController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,20 +25,19 @@ class MechanicScheduleScreen extends StatelessWidget {
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
-                title: Text(request['customerName'] ?? ''),
+                title: Text(request['customerName'] ?? 'Unknown'),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Car: ${request['carDetails']}'),
-                    Text('Issue: ${request['issue']}'),
-                    Text('Response: ${request['response']}'),
-                    Text('Status: ${request['status']}'),
+                    Text('Car: ${request['carDetails'] ?? "N/A"}'),
+                    Text('Issue: ${request['issue'] ?? "N/A"}'),
+                    Text('Response: ${request['response'] ?? "No response"}'),
+                    Text('Status: ${request['status'] ?? "Pending"}'),
                   ],
                 ),
                 trailing: request['status'] == 'Scheduled'
                     ? ElevatedButton(
                   onPressed: () {
-                    // Mark the appointment as done
                     scheduleController.markAsDone(index);
                   },
                   child: Text('Done'),

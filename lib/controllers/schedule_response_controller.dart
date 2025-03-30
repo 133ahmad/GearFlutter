@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class ScheduleController extends GetxController {
+class ScheduleResponseController extends GetxController {
   var schedule = <Map<String, String>>[].obs; // Observable list of scheduled requests
 
   // Add a service request to the schedule

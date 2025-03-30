@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:gear/controllers/editprofile_controller.dart';  // Import the controller
+import 'package:gear/controllers/editprofile_controller.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final EditProfileController controller = Get.put(EditProfileController());
@@ -10,9 +10,7 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Profile'),
-      ),
+      appBar: AppBar(title: Text('Edit Profile')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -20,7 +18,7 @@ class EditProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile picture
+                // Profile Picture
                 Center(
                   child: GestureDetector(
                     onTap: () async {
@@ -66,7 +64,7 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
 
-                // Phone number field
+                // Phone Number
                 TextFormField(
                   controller: controller.phoneController,
                   decoration: InputDecoration(
@@ -77,17 +75,19 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
 
-                // Save button
-                ElevatedButton(
-                  onPressed: () {
-                    controller.saveProfile();
-                    Get.back(); // Go back after saving
-                  },
-                  child: Text('Save Changes'),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                // Save Button (Centered)
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      controller.saveProfile(); // Save data including the image
+                      Get.back(); // Go back after saving
+                    },
+                    child: Text('Save Changes'),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                   ),
                 ),
