@@ -1,35 +1,82 @@
 import 'package:get/get.dart';
-import 'package:gear/models/job_model.dart'; // Assuming you have a Job model
+import 'package:gear/models/job_model.dart';
+import 'package:gear/models/mechanic.dart';
+import 'package:gear/services/mechanic_service.dart';
 
 class MechanicController extends GetxController {
-  // List of assigned jobs
+  final MechanicService mechanicService = Get.find<MechanicService>();
+
+  var mechanic = Rxn<Mechanic>();
   var assignedJobs = <Job>[].obs;
+  var isLoading = false.obs;
+  var error = Rxn<String>();
 
-  // Fetch assigned jobs (example method)
-  void fetchAssignedJobs() {
-    // Simulate fetching jobs from an API or database
-    assignedJobs.assignAll([
-      Job(id: '1', carMake: 'Toyota', carModel: 'Corolla', issue: 'Engine Check'),
-      Job(id: '2', carMake: 'Honda', carModel: 'Civic', issue: 'Brake Repair'),
-    ]);
+  // Fetch mechanic profile
+  Future<void> fetchMechanicProfile(int id) async {
+    try {
+      isLoading(true);
+      error(null);
+      mechanic.value = await mechanicService.getMechanicProfile(id);
+    } catch (e) {
+      error('Failed to load mechanic profile');
+      print('Error fetching mechanic profile: $e');
+      rethrow;
+    } finally {
+      isLoading(false);
+    }
   }
 
-  // Update job status (example method)
-  void updateJobStatus(String jobId, String status) {
-    final job = assignedJobs.firstWhere((job) => job.id == jobId);
-    job.status = status;
-    assignedJobs.refresh(); // Refresh the list to update the UI
+  // Fetch assigned jobs
+  Future<void> fetchAssignedJobs(int mechanicId) async {
+    try {
+      isLoading(true);
+      error(null);
+      assignedJobs.value = await mechanicService.getAssignedJobs(mechanicId);
+    } catch (e) {
+      error('Failed to load assigned jobs');
+      print('Error fetching assigned jobs: $e');
+      rethrow;
+    } finally {
+      isLoading(false);
+    }
   }
 
-  // Settings related logic
-  var notificationEnabled = true.obs;
-  var darkModeEnabled = false.obs;
-
-  void toggleNotification(bool value) {
-    notificationEnabled.value = value;
+  // Update mechanic availability
+  Future<void> updateMechanicAvailability(int id, String availability) async {
+    try {
+      isLoading(true);
+      error(null);
+      await mechanicService.updateAvailability(id, availability);
+      // Refresh profile after update
+      await fetchMechanicProfile(id);
+    } catch (e) {
+      error('Failed to update availability');
+      print('Error updating mechanic availability: $e');
+      rethrow;
+    } finally {
+      isLoading(false);
+    }
   }
 
-  void toggleDarkMode(bool value) {
-    darkModeEnabled.value = value;
+  // Update job status
+  Future<void> updateJobStatus(int jobId, String newStatus) async {
+    try {
+      isLoading(true);
+      error(null);
+      await mechanicService.updateJobStatus(jobId, newStatus);
+
+      // Update the local list efficiently
+      final index = assignedJobs.indexWhere((job) => job.id == jobId);
+      if (index != -1) {
+        assignedJobs[index] = assignedJobs[index].copyWith(status: newStatus);
+        assignedJobs.refresh();
+      }
+    } catch (e) {
+      error('Failed to update job status');
+      print('Error updating job status: $e');
+      rethrow;
+    } finally {
+      isLoading(false);
+    }
   }
 }

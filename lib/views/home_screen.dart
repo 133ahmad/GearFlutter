@@ -5,11 +5,12 @@ import 'package:gear/routes/AppPage.dart';
 import 'package:gear/views/EditProfileScreen.dart';
 import 'package:gear/models/car_model.dart';
 import 'package:gear/controllers/editprofile_controller.dart';
-import 'package:gear/controllers/car_controller.dart'; // Controller to manage car data
+import 'package:gear/controllers/car_controller.dart';
+
 
 class HomeScreen extends StatelessWidget {
-  final EditProfileController profileController = Get.find(); // Access the controller
-  final CarController carController = Get.put(CarController()); // Manage car data
+  final EditProfileController profileController = Get.find();
+  final CarController carController = Get.put(CarController());
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +47,12 @@ class HomeScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center, // Centers all widgets
           children: [
+            _buildWelcomeMessage(),
+
+            SizedBox(height: 20),
+
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -65,7 +70,6 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Car Section - Checks if the user has a car
             Obx(() {
               return carController.userCar.value == null
                   ? _buildAddCarWidget()
@@ -74,7 +78,6 @@ class HomeScreen extends StatelessWidget {
 
             SizedBox(height: 20),
 
-            // Buttons for Schedule, My Orders, and My Cars
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -121,7 +124,7 @@ class HomeScreen extends StatelessWidget {
           if (index == 0) {
             Get.toNamed(AppRoute.customerChat);
           } else if (index == 1) {
-            Get.toNamed(AppRoute.myCar);  // Corrected 'Mycar' to 'myCar'
+            Get.toNamed(AppRoute.myCar);
           } else if (index == 2) {
             Get.toNamed(AppRoute.orders);
           }
@@ -130,11 +133,35 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Widget to add a car
+  // New welcome message widget
+  Widget _buildWelcomeMessage() {
+    return Column(
+      children: [
+        Text(
+          "Welcome Back!",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.blueAccent.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            "Find the best mechanics near you or request emergency help!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.blueGrey),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAddCarWidget() {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoute.myCar);  // Corrected 'Mycar' to 'myCar'
+        Get.toNamed(AppRoute.myCar);
       },
       child: Container(
         padding: EdgeInsets.all(16),
@@ -161,7 +188,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Widget to show car details
   Widget _buildCarInfoWidget(Car car) {
     return Container(
       padding: EdgeInsets.all(16),
@@ -193,7 +219,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Button builder
   Widget _buildButton(String text, IconData icon, VoidCallback onPressed) {
     return ElevatedButton.icon(
       onPressed: onPressed,

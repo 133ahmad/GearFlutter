@@ -11,7 +11,7 @@ class OrdersController extends GetxController {
   Future<void> searchParts(String query) async {
     try {
       isLoading(true);
-      var response = await Dio().get('https://your-laravel-api.com/api/car-parts', queryParameters: {
+      var response = await Dio().get('http://127.0.0.1:8000/api/car-parts', queryParameters: {
         'search': query,
       });
 

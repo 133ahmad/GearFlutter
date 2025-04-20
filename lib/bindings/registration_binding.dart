@@ -1,4 +1,4 @@
-import 'package:gear/controllers/registration_controller.dart';
+import 'package:gear/controllers/registrationCustomer_controller.dart';
 import 'package:get_it/get_it.dart';
 
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gear/controllers/emergency_controller.dart';
-
 class EmergencyRequestScreen extends StatelessWidget {
   final EmergencyRequestController controller = Get.put(EmergencyRequestController());
 
@@ -23,7 +22,7 @@ class EmergencyRequestScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
 
-            // Live location display
+            // Displaying the live location
             Obx(() => TextField(
               readOnly: true,
               decoration: InputDecoration(

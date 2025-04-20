@@ -5,20 +5,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class EmergencyRequestController extends GetxController {
-  final TextEditingController detailsController = TextEditingController();
+  final TextEditingController detailsController = TextEditingController(); // Added controller
   var currentLocation = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    getUserLocation();
-  }
-
+  // Get current user location
   Future<void> getUserLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       Get.snackbar("Error", "Location services are disabled.",
@@ -26,7 +20,6 @@ class EmergencyRequestController extends GetxController {
       return;
     }
 
-    // Check for permissions
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -43,15 +36,15 @@ class EmergencyRequestController extends GetxController {
       return;
     }
 
-    // Get current position
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     currentLocation.value = "${position.latitude}, ${position.longitude}";
   }
 
-  Future<void> submitEmergencyRequest(int userId) async {
-    String details = detailsController.text.trim();
-    if (currentLocation.value.isEmpty || details.isEmpty) {
+  // Submit emergency request to API
+  Future<void> submitEmergencyRequest(int customerId) async {
+    String description = detailsController.text.trim();
+    if (currentLocation.value.isEmpty || description.isEmpty) {
       Get.snackbar('Error', 'Please enter emergency details!',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
@@ -59,12 +52,13 @@ class EmergencyRequestController extends GetxController {
 
     try {
       var response = await http.post(
-        Uri.parse('http://your-laravel-api.com/api/emergency-requests'),
+        Uri.parse('http://your-laravel-api-url.com/api/emergency-requests'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'user_id': userId,
+          'description': description,
           'location': currentLocation.value,
-          'details': details,
+          'customer_id': customerId,  // Send customer ID dynamically
+          'responseTime': DateTime.now().toIso8601String(),
         }),
       );
 
@@ -81,5 +75,11 @@ class EmergencyRequestController extends GetxController {
       Get.snackbar('Error', 'Failed to connect to server!',
           backgroundColor: Colors.red, colorText: Colors.white);
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getUserLocation();
   }
 }

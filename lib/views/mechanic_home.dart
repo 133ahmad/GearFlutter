@@ -7,12 +7,26 @@ import 'package:gear/models/car_model.dart';
 import 'package:gear/controllers/editprofile_controller.dart';
 import 'package:gear/controllers/car_controller.dart';
 import 'package:gear/controllers/location_controller.dart';
+import 'package:gear/services/mechanic_service.dart';
+import 'package:gear/controllers/mechanic_controller.dart';
+import 'package:gear/views/assigned_job.dart';
+import 'package:gear/views/mechanicProfile.dart';
+class MechanicHomeScreen extends StatefulWidget {
+  @override
+  _MechanicHomeScreenState createState() => _MechanicHomeScreenState();
+}
 
+class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
+  final EditProfileController profileController = Get.find();
+  final CarController carController = Get.put(CarController());
+  final LocationController locationController = Get.find();
+  final MechanicService mechanicService = MechanicService();
 
-class MechanicHomeScreen extends StatelessWidget {
-  final EditProfileController profileController = Get.find(); // Access the controller
-  final CarController carController = Get.put(CarController()); // Manage car data
-  final LocationController locationController = Get.find(); // Access the location controller
+  @override
+  void initState() {
+    super.initState();
+    // No need to fetch mechanic data if it's not required for initial view
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +35,7 @@ class MechanicHomeScreen extends StatelessWidget {
         title: Row(
           children: [
             GestureDetector(
-              onTap: () {
-                Get.to(EditProfileScreen());
-              },
+              onTap: () => Get.to(EditProfileScreen()),
               child: Obx(() {
                 return CircleAvatar(
                   backgroundImage: profileController.profileImage.value.isNotEmpty
@@ -40,9 +52,7 @@ class MechanicHomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () {
-              Get.offAllNamed(AppRoute.login);
-            },
+            onPressed: () => Get.offAllNamed(AppRoute.login),
           ),
         ],
       ),
@@ -51,12 +61,9 @@ class MechanicHomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Button to reply to emergency requests
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(AppRoute.emergencyResponse); // Navigate to emergency response screen
-                },
+                onPressed: () => Get.toNamed(AppRoute.emergencyResponse),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
@@ -64,12 +71,11 @@ class MechanicHomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                child: Text('Reply to Emergency Requests', style: TextStyle(fontSize: 20, color: Colors.white)),
+                child: Text('Reply to Emergency Requests',
+                    style: TextStyle(fontSize: 20, color: Colors.white)),
               ),
             ),
             SizedBox(height: 20),
-
-            // Display location status
             Obx(() {
               return Center(
                 child: Text(
@@ -82,17 +88,12 @@ class MechanicHomeScreen extends StatelessWidget {
               );
             }),
             SizedBox(height: 20),
-
-            // Assigned Jobs Section
             Obx(() {
               return carController.userCar.value == null
                   ? _buildNoJobsWidget()
                   : _buildAssignedJobsWidget(carController.userCar.value!);
             }),
-
             SizedBox(height: 20),
-
-            // Buttons for Service Requests, Assigned Jobs, and Schedule
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -100,7 +101,7 @@ class MechanicHomeScreen extends StatelessWidget {
                   Get.toNamed(AppRoute.serviceResponse);
                 }),
                 _buildButton('Assigned Jobs', Icons.work, () {
-                  Get.toNamed(AppRoute.assignedJobs);
+                  Get.to(AssignedJobsScreen(mechanicId: 1)); // Pass actual mechanic ID
                 }),
               ],
             ),
@@ -125,15 +126,18 @@ class MechanicHomeScreen extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 8,
                     backgroundColor: Colors.red,
-                    child: Text('3', style: TextStyle(color: Colors.white, fontSize: 12)),
+                    child: Text('3',
+                        style: TextStyle(color: Colors.white, fontSize: 12)),
                   ),
                 ),
               ],
             ),
             label: 'Chats',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.car_repair), label: 'Car Parts'), // Updated to Car Parts
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.car_repair), label: 'Car Parts'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: 'Profile'), // Changed from Settings to Profile
         ],
         onTap: (index) {
           if (index == 0) {
@@ -141,19 +145,16 @@ class MechanicHomeScreen extends StatelessWidget {
           } else if (index == 1) {
             Get.toNamed(AppRoute.carParts);
           } else if (index == 2) {
-            Get.toNamed(AppRoute.mechanicSettings);
+            Get.toNamed(AppRoute.mechanicProfile); // Navigate to profile instead of settings
           }
         },
       ),
     );
   }
 
-  // Widget to show no jobs assigned
   Widget _buildNoJobsWidget() {
     return GestureDetector(
-      onTap: () {
-        Get.toNamed(AppRoute.assignedJobs);
-      },
+      onTap: () => Get.to(AssignedJobsScreen(mechanicId: 1)), // Pass actual mechanic ID
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -164,7 +165,8 @@ class MechanicHomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Assigned Jobs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Assigned Jobs',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Row(
               children: [
@@ -179,7 +181,6 @@ class MechanicHomeScreen extends StatelessWidget {
     );
   }
 
-  // Widget to show assigned job details
   Widget _buildAssignedJobsWidget(Car car) {
     return Container(
       padding: EdgeInsets.all(16),
@@ -191,7 +192,8 @@ class MechanicHomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Assigned Job', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Assigned Job',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           Row(
             children: [
@@ -211,7 +213,6 @@ class MechanicHomeScreen extends StatelessWidget {
     );
   }
 
-  // Button builder
   Widget _buildButton(String text, IconData icon, VoidCallback onPressed) {
     return ElevatedButton.icon(
       onPressed: onPressed,

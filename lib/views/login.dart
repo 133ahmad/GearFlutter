@@ -1,45 +1,25 @@
-// screens/login_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gear/controllers/login_controller.dart'; // Import the LoginController
+import 'package:gear/controllers/auth_controller.dart';
+import 'package:gear/routes/AppRoute.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
-  final TextEditingController phoneController = TextEditingController(); // Phone controller
-  final TextEditingController passwordController = TextEditingController(); // Password controller
-  final LoginController loginController = LoginController(); // LoginController instance
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthController authController = Get.put(AuthController());
 
-  String _selectedRole = 'Customer'; // Default role
-
-  // Submit method to handle login
-  void _submit(BuildContext context) async {
+  void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      // For testing, use the handleLogin method (mock login)
-      await loginController.handleLogin(
-        context,
-        phoneController.text.trim(),
+      authController.login(
+        emailController.text.trim(),
         passwordController.text.trim(),
-        _selectedRole,
       );
-
-      // For real login (uncomment this when ready to test with real API)
-      // bool loginSuccess = await loginController.handleLoginReal(
-      //   context,
-      //   phoneController.text.trim(),
-      //   passwordController.text.trim(),
-      //   _selectedRole,
-      // );
-
-      // if (!loginSuccess) {
-      //   // Handle login failure
-      //   print("Login failed!");
-      // }
     }
   }
 
@@ -47,88 +27,80 @@ class _LoginScreenState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Phone number input field
-              TextFormField(
-                controller: phoneController,
-                decoration: InputDecoration(labelText: 'Phone Number'),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  return null;
-                },
-              ),
-              // Password input field
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              // Role Selection
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 50),
+                Text(
+                  'Welcome Back!',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
                 ),
-                child: Column(
+                SizedBox(height: 30),
+                TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    if (value.length < 8) {
+                      return 'Password must be at least 8 characters';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submit,
+                  child: Text('Login'),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Don't have an account?",
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 10),
+                Column(
                   children: [
-                    Text('Select Role', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    RadioListTile(
-                      title: Text('Customer'),
-                      value: 'Customer',
-                      groupValue: _selectedRole,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRole = value.toString();
-                        });
+                    OutlinedButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoute.registerCustomer);
                       },
+                      child: Text('Sign Up as Customer'),
                     ),
-                    RadioListTile(
-                      title: Text('Mechanic'),
-                      value: 'Mechanic',
-                      groupValue: _selectedRole,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRole = value.toString();
-                        });
+                    SizedBox(height: 10),
+                    OutlinedButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoute.registerMechanic);
                       },
+                      child: Text('Sign Up as Mechanic'),
                     ),
                   ],
                 ),
-              ),
-
-              SizedBox(height: 20),
-
-              // Login button
-              ElevatedButton(
-                onPressed: () => _submit(context),
-                child: Text('Login'),
-              ),
-
-              // Register link
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/register');
-                },
-                child: Text('Don\'t have an account? Register'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
