@@ -37,7 +37,7 @@ class RegistrationController {
           'start_time': startTime,
           'end_time': endTime,
           'workdays': workdays, // Use the comma-separated string
-        },
+         },
       );
 
       final data = json.decode(response.body);
