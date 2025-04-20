@@ -39,7 +39,7 @@ class MechanicProfileScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // You can implement the functionality to update availability or profile here
+                  // Update availability logic
                   mechanicController.updateMechanicAvailability(mechanic.id, 'Available');
                 },
                 child: Text('Update Availability'),

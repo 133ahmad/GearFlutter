@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 class RegistrationController {
   final storage = GetStorage();
-
   Future<Map<String, dynamic>> handleMechanicRegistration(
       BuildContext context,
       String name,
@@ -16,11 +15,9 @@ class RegistrationController {
       String location,
       String password,
       String passwordConfirmation,
-      String latitude,
-      String longitude,
       String startTime,
       String endTime,
-      List<String> workdays,
+      String workdays,  // Update to accept a single string (comma-separated)
       ) async {
     final url = Uri.parse('http://10.0.2.2:8000/api/mechanics/register');
 
@@ -37,11 +34,9 @@ class RegistrationController {
           'location': location,
           'password': password,
           'password_confirmation': passwordConfirmation,
-          'latitude': latitude,
-          'longitude': longitude,
           'start_time': startTime,
           'end_time': endTime,
-          'workdays[]': workdays,
+          'workdays': workdays, // Use the comma-separated string
         },
       );
 

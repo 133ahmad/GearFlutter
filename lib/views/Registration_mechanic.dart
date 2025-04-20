@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gear/controllers/registrationMechanic_controller.dart';
-import 'package:location/location.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class RegisterMechanicPage extends StatefulWidget {
   @override
@@ -19,8 +17,6 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
   final locationController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final latitudeController = TextEditingController();
-  final longitudeController = TextEditingController();
 
   final RegistrationController registrationController = RegistrationController();
 
@@ -34,50 +30,24 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
     'Saturday': false,
     'Sunday': false,
   };
-
-  Future<void> _getLocation() async {
-    var status = await Permission.location.request();
-
-    if (status.isGranted) {
-      Location location = Location();
-
-      bool serviceEnabled = await location.serviceEnabled();
-      if (!serviceEnabled) {
-        serviceEnabled = await location.requestService();
-        if (!serviceEnabled) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please enable location services.')),
-          );
-          return;
-        }
-      }
-
-      LocationData locationData = await location.getLocation();
-
-      setState(() {
-        latitudeController.text = locationData.latitude?.toString() ?? '';
-        longitudeController.text = locationData.longitude?.toString() ?? '';
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Location permission denied.')),
-      );
-    }
-  }
-
   void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
+      // Map the selected workdays to a list of strings
       final selectedDays = selectedWorkdays.entries
-          .where((entry) => entry.value)
-          .map((entry) => entry.key)
+          .where((entry) => entry.value) // Only select days where the value is true
+          .map((entry) => entry.key) // Get the key (day name)
           .toList();
 
+      // Check if at least one day is selected
       if (selectedDays.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please select at least one workday.')),
         );
         return;
       }
+
+      // Convert the selected days list to a comma-separated string
+      final workdaysString = selectedDays.join(',');
 
       final response = await registrationController.handleMechanicRegistration(
         context,
@@ -89,11 +59,9 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
         locationController.text.trim(),
         passwordController.text.trim(),
         confirmPasswordController.text.trim(),
-        latitudeController.text.trim(),
-        longitudeController.text.trim(),
         '09:00:00', // start_time
         '17:00:00', // end_time
-        selectedDays,
+        workdaysString, // Pass the comma-separated string
       );
 
       if (response['status'] == 'success') {
@@ -105,6 +73,7 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
       }
     }
   }
+
 
   Widget _buildWorkdayCheckboxes() {
     return Column(
@@ -193,32 +162,6 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 value!.isEmpty ? 'Please enter your location' : null,
               ),
               SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: latitudeController,
-                      decoration: InputDecoration(labelText: 'Latitude'),
-                      readOnly: true,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: longitudeController,
-                      decoration: InputDecoration(labelText: 'Longitude'),
-                      readOnly: true,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _getLocation,
-                child: Text('Use Current Location'),
-              ),
-              SizedBox(height: 20),
 
               _buildWorkdayCheckboxes(),
               SizedBox(height: 20),

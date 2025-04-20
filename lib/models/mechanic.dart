@@ -6,7 +6,7 @@ class Mechanic {
   final String location;
   final String specialization;
   final int experience;
-  final double rating;
+  final String rating;
   final String availability;
 
   Mechanic({
