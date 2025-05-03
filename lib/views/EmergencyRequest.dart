@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gear/controllers/emergency_controller.dart';
+
 class EmergencyRequestScreen extends StatelessWidget {
   final EmergencyRequestController controller = Get.put(EmergencyRequestController());
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,11 @@ class EmergencyRequestScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.submitEmergencyRequest(1), // Pass user ID dynamically
+                onPressed: () {
+                  String token = box.read('token') ?? ''; // Get token from GetStorage
+                  int mechanicId = 2; // 🔧 TODO: Replace with dynamic mechanic selection
+                  controller.submitEmergencyRequest(token, mechanicId);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding: EdgeInsets.symmetric(vertical: 16),

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gear/utils/api_constants.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 class RegistrationController {
   final storage = GetStorage();
+
   Future<Map<String, dynamic>> handleMechanicRegistration(
       BuildContext context,
       String name,
@@ -13,17 +15,19 @@ class RegistrationController {
       String specialization,
       String experience,
       String location,
+      String latitude,
+      String longitude,
       String password,
       String passwordConfirmation,
       String startTime,
       String endTime,
-      String workdays,  // Update to accept a single string (comma-separated)
+      List<String> workdays,  // Accept as a List of Strings
       ) async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/mechanics/register');
+    final registerMechanicUrl = Uri.parse(ApiConstants.registerMechanic);
 
     try {
       final response = await http.post(
-        url,
+        registerMechanicUrl,
         headers: {'Accept': 'application/json'},
         body: {
           'name': name,
@@ -32,12 +36,14 @@ class RegistrationController {
           'specialization': specialization,
           'experience': experience,
           'location': location,
+          'latitude': latitude,  // Added latitude
+          'longitude': longitude, // Added longitude
           'password': password,
           'password_confirmation': passwordConfirmation,
           'start_time': startTime,
           'end_time': endTime,
-          'workdays': workdays, // Use the comma-separated string
-         },
+          'workdays': jsonEncode(workdays), // Send as array
+        },
       );
 
       final data = json.decode(response.body);

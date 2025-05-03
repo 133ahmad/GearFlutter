@@ -11,7 +11,7 @@ class AuthController extends GetxController {
   final RxString role = ''.obs;
   final RxBool isLoggedIn = false.obs;
 
-  final String baseUrl = 'http://192.168.0.100:8000/api';  // Ensure this URL matches your Laravel backend
+  final String baseUrl = 'http://192.168.0.102:8000/api';
 
   @override
   void onInit() {

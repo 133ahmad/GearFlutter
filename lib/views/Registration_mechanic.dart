@@ -15,12 +15,13 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
   final specializationController = TextEditingController();
   final experienceController = TextEditingController();
   final locationController = TextEditingController();
+  final latitudeController = TextEditingController();         // added
+  final longitudeController = TextEditingController();        // added
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   final RegistrationController registrationController = RegistrationController();
 
-  // Weekday options
   final Map<String, bool> selectedWorkdays = {
     'Monday': false,
     'Tuesday': false,
@@ -32,22 +33,18 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
   };
   void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Map the selected workdays to a list of strings
+      // Get selected days as an array
       final selectedDays = selectedWorkdays.entries
-          .where((entry) => entry.value) // Only select days where the value is true
-          .map((entry) => entry.key) // Get the key (day name)
+          .where((entry) => entry.value)
+          .map((entry) => entry.key)
           .toList();
 
-      // Check if at least one day is selected
       if (selectedDays.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please select at least one workday.')),
         );
         return;
       }
-
-      // Convert the selected days list to a comma-separated string
-      final workdaysString = selectedDays.join(',');
 
       final response = await registrationController.handleMechanicRegistration(
         context,
@@ -57,11 +54,13 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
         specializationController.text.trim(),
         experienceController.text.trim(),
         locationController.text.trim(),
+        latitudeController.text.trim(),
+        longitudeController.text.trim(),
         passwordController.text.trim(),
         confirmPasswordController.text.trim(),
         '09:00:00', // start_time
         '17:00:00', // end_time
-        workdaysString, // Pass the comma-separated string
+        selectedDays, // Pass the array directly
       );
 
       if (response['status'] == 'success') {
@@ -73,7 +72,6 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
       }
     }
   }
-
 
   Widget _buildWorkdayCheckboxes() {
     return Column(
@@ -115,8 +113,7 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(labelText: 'Full Name'),
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your full name' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your full name' : null,
               ),
               SizedBox(height: 10),
 
@@ -124,8 +121,7 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 controller: phoneController,
                 decoration: InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your phone number' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your phone number' : null,
               ),
               SizedBox(height: 10),
 
@@ -133,16 +129,14 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 controller: emailController,
                 decoration: InputDecoration(labelText: 'Email Address'),
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your email' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your email' : null,
               ),
               SizedBox(height: 10),
 
               TextFormField(
                 controller: specializationController,
                 decoration: InputDecoration(labelText: 'Specialization'),
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your specialization' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your specialization' : null,
               ),
               SizedBox(height: 10),
 
@@ -150,16 +144,30 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 controller: experienceController,
                 decoration: InputDecoration(labelText: 'Experience (in years)'),
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your experience' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your experience' : null,
               ),
               SizedBox(height: 10),
 
               TextFormField(
                 controller: locationController,
                 decoration: InputDecoration(labelText: 'Location'),
-                validator: (value) =>
-                value!.isEmpty ? 'Please enter your location' : null,
+                validator: (value) => value!.isEmpty ? 'Please enter your location' : null,
+              ),
+              SizedBox(height: 10),
+
+              TextFormField(
+                controller: latitudeController,
+                decoration: InputDecoration(labelText: 'Latitude'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                validator: (value) => value!.isEmpty ? 'Please enter latitude' : null,
+              ),
+              SizedBox(height: 10),
+
+              TextFormField(
+                controller: longitudeController,
+                decoration: InputDecoration(labelText: 'Longitude'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                validator: (value) => value!.isEmpty ? 'Please enter longitude' : null,
               ),
               SizedBox(height: 10),
 
@@ -172,8 +180,7 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) return 'Please enter a password';
-                  if (value.length < 8)
-                    return 'Password must be at least 8 characters';
+                  if (value.length < 8) return 'Password must be at least 8 characters';
                   return null;
                 },
               ),
@@ -185,8 +192,7 @@ class _RegisterMechanicPageState extends State<RegisterMechanicPage> {
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) return 'Please confirm your password';
-                  if (value != passwordController.text)
-                    return 'Passwords do not match';
+                  if (value != passwordController.text) return 'Passwords do not match';
                   return null;
                 },
               ),

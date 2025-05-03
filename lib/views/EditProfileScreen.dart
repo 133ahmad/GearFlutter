@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:gear/controllers/editprofile_controller.dart';
 
 class EditProfileScreen extends StatelessWidget {
-  final EditProfileController controller = Get.put(EditProfileController());
+  final EditProfileController profileController = Get.find();
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -13,67 +20,78 @@ class EditProfileScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
+        child: Obx(() {
+          return Column(
             children: [
-              // Profile Picture (optional)
+              // Profile Image
               GestureDetector(
-                onTap: () async {
-                  // Handle image selection (optional)
+                onTap: () {
+                  _selectImage();
                 },
-                child: Obx(() {
-                  return CircleAvatar(
-                    radius: 60,
-                    backgroundImage: controller.profileImage.value.isNotEmpty
-                        ? NetworkImage(controller.profileImage.value)
-                        : AssetImage('assets/profile_placeholder.png') as ImageProvider,
-                    child: controller.profileImage.value.isEmpty
-                        ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
-                        : null,
-                  );
-                }),
+                child: CircleAvatar(
+                  backgroundImage: profileController.profileImageUrl.value.isNotEmpty
+                      ? FileImage(File(profileController.profileImageUrl.value))
+                      : AssetImage('assets/default_profile.png') as ImageProvider,
+                  radius: 50,
+                ),
               ),
               SizedBox(height: 20),
 
-              // Name
+              // Profile Information Forms
               TextField(
-                controller: controller.nameController,
+                controller: nameController..text = profileController.profile.value.name ?? '',
                 decoration: InputDecoration(labelText: 'Name'),
+                onChanged: (value) {
+                  profileController.updateProfileDetails(value, emailController.text, phoneController.text, cityController.text);
+                },
               ),
-              SizedBox(height: 20),
-
-              // Email
               TextField(
-                controller: controller.emailController,
+                controller: emailController..text = profileController.profile.value.email ?? '',
                 decoration: InputDecoration(labelText: 'Email'),
+                onChanged: (value) {
+                  profileController.updateProfileDetails(nameController.text, value, phoneController.text, cityController.text);
+                },
               ),
-              SizedBox(height: 20),
-
-              // Phone
               TextField(
-                controller: controller.phoneController,
-                decoration: InputDecoration(labelText: 'Phone Number'),
+                controller: phoneController..text = profileController.profile.value.phone ?? '',
+                decoration: InputDecoration(labelText: 'Phone'),
+                onChanged: (value) {
+                  profileController.updateProfileDetails(nameController.text, emailController.text, value, cityController.text);
+                },
               ),
-              SizedBox(height: 20),
-
-              // City
               TextField(
-                controller: controller.cityController,
+                controller: cityController..text = profileController.profile.value.city ?? '',
                 decoration: InputDecoration(labelText: 'City'),
+                onChanged: (value) {
+                  profileController.updateProfileDetails(nameController.text, emailController.text, phoneController.text, value);
+                },
               ),
+
               SizedBox(height: 20),
 
               // Save Button
               ElevatedButton(
                 onPressed: () {
-                  controller.updateProfile();
+                  // Logic to save profile details can be added here (e.g., sending data to backend)
+                  Get.back(); // Go back to previous screen
                 },
-                child: Text('Save Changes'),
+                child: Text('Save Profile'),
               ),
             ],
-          ),
-        ),
+          );
+        }),
       ),
     );
+  }
+
+  // Method to pick an image using ImagePicker
+  Future<void> _selectImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Update profile image URL in the controller
+      profileController.updateProfileImage(pickedFile.path);
+    }
   }
 }

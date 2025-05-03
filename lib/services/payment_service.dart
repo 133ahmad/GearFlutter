@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:gear/models/payment_model.dart';
 
 class PaymentService {
-  final String apiUrl = 'http://127.0.0.1:8000/api/';
+  final String apiUrl = 'http://192.168.0.102:8000/api';
 
   // Store payment
   Future<Payment> storePayment(Payment payment) async {

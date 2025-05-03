@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class Api {
   // Base URL of your backend API
-  static const String baseUrl = 'http://192.168.0.100:8000/api';
+  static const String baseUrl = 'http://192.168.0.102:8000/api';
 
   // POST request method
   static Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {

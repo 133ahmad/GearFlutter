@@ -7,7 +7,7 @@ class CustomerService {
   final GetStorage _storage = GetStorage();
 
   // Set the base API URL
-  final String baseUrl = 'http://192.168.0.100:8000/api';
+  final String baseUrl = 'http://192.168.0.102:8000/api';
 
   // Fetch Customer Profile
   Future<Customer?> getCustomerProfile(int id) async {

@@ -4,7 +4,8 @@ import 'package:gear/models/job_model.dart';
 import 'package:gear/models/mechanic.dart';
 
 class MechanicService {
-  final String apiUrl = 'http://127.0.0.1:8000/api/';
+  final String apiUrl = 'http://192.168.0.102:8000/api';
+
 
   Future<Mechanic> getMechanicProfile(int mechanicId) async {
     final response = await http.get(

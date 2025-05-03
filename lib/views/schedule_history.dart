@@ -4,35 +4,72 @@ import 'package:gear/controllers/scheduleHistory_controller.dart';
 import 'package:gear/models/schedule_model.dart';
 
 class ScheduleHistoryScreen extends StatelessWidget {
-  final ScheduleHistoryController scheduleController = Get.put(ScheduleHistoryController());
+  final ScheduleHistoryController controller = Get.put(ScheduleHistoryController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Schedule History & Upcoming')),
+      appBar: AppBar(
+        title: const Text('Appointment History'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: controller.fetchSchedules,
+          ),
+        ],
+      ),
       body: Obx(() {
-        if (scheduleController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
         }
-        if (scheduleController.schedules.isEmpty) {
-          return Center(child: Text('No schedules available.'));
+        if (controller.schedules.isEmpty) {
+          return const Center(child: Text('No appointments found'));
         }
         return ListView.builder(
-          itemCount: scheduleController.schedules.length,
+          padding: const EdgeInsets.all(8),
+          itemCount: controller.schedules.length,
           itemBuilder: (context, index) {
-            Schedule schedule = scheduleController.schedules[index];
-            return ListTile(
-              leading: Icon(
-                schedule.isUpcoming ? Icons.schedule : Icons.check_circle,
-                color: schedule.isUpcoming ? Colors.orange : Colors.green,
-              ),
-              title: Text(schedule.title),
-              subtitle: Text(schedule.dateTime),
-              trailing: Text(schedule.isUpcoming ? 'Upcoming' : 'Completed'),
-            );
+            final schedule = controller.schedules[index];
+            return _buildScheduleCard(schedule, context); // Pass context here
           },
         );
       }),
+    );
+  }
+
+  Widget _buildScheduleCard(Schedule schedule, BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        leading: Icon(
+          schedule.statusIcon,
+          color: schedule.statusColor,
+        ),
+        title: Text(
+          schedule.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Service: ${schedule.serviceType}'),
+            Text('Mechanic: ${schedule.mechanicName}'),
+            Text('Date: ${schedule.formattedDate}'),
+            Text('Time: ${schedule.formattedTime}'),
+            if (schedule.isUpcoming)
+              Text(
+                schedule.timeRemaining,
+                style: TextStyle(color: Theme.of(context).primaryColor), // Use context here
+              ),
+          ],
+        ),
+        trailing: schedule.isUpcoming
+            ? IconButton(
+          icon: const Icon(Icons.cancel, color: Colors.red),
+          onPressed: () => controller.cancelSchedule(schedule.id),
+        )
+            : null,
+      ),
     );
   }
 }

@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gear/views/assigned_job.dart';
 import 'package:get/get.dart';
 import 'package:gear/routes/AppPage.dart';
 import 'package:gear/views/EditProfileScreen.dart';
-import 'package:gear/models/car_model.dart';
 import 'package:gear/controllers/editprofile_controller.dart';
 import 'package:gear/controllers/car_controller.dart';
 import 'package:gear/controllers/location_controller.dart';
 import 'package:gear/services/mechanic_service.dart';
-import 'package:gear/controllers/mechanic_controller.dart';
-import 'package:gear/views/assigned_job.dart';
-import 'package:gear/views/mechanicProfile.dart';
+
+import '../models/car_model.dart';
+
 class MechanicHomeScreen extends StatefulWidget {
   @override
   _MechanicHomeScreenState createState() => _MechanicHomeScreenState();
@@ -25,7 +25,7 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
   @override
   void initState() {
     super.initState();
-    // No need to fetch mechanic data if it's not required for initial view
+    // You can fetch mechanic data if needed, e.g., from an API
   }
 
   @override
@@ -38,8 +38,8 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
               onTap: () => Get.to(EditProfileScreen()),
               child: Obx(() {
                 return CircleAvatar(
-                  backgroundImage: profileController.profileImage.value.isNotEmpty
-                      ? FileImage(File(profileController.profileImage.value))
+                  backgroundImage: profileController.profileImageUrl.value.isNotEmpty
+                      ? FileImage(File(profileController.profileImageUrl.value))
                       : AssetImage('assets/profile_placeholder.png') as ImageProvider,
                   radius: 18,
                 );
@@ -88,6 +88,7 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
               );
             }),
             SizedBox(height: 20),
+            // Display mechanic's car and job details if available
             Obx(() {
               return carController.userCar.value == null
                   ? _buildNoJobsWidget()
@@ -126,8 +127,7 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
                   child: CircleAvatar(
                     radius: 8,
                     backgroundColor: Colors.red,
-                    child: Text('3',
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
+                    child: Text('3', style: TextStyle(color: Colors.white, fontSize: 12)),
                   ),
                 ),
               ],
@@ -137,7 +137,7 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.car_repair), label: 'Car Parts'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Profile'), // Changed from Settings to Profile
+              icon: Icon(Icons.person), label: 'Profile'),
         ],
         onTap: (index) {
           if (index == 0) {

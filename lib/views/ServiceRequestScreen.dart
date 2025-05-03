@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 class ServiceRequestForm extends StatelessWidget {
   final ServiceRequestController controller = Get.put(ServiceRequestController());
+  final timeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -12,23 +13,23 @@ class ServiceRequestForm extends StatelessWidget {
       appBar: AppBar(
         title: Text('Service Request Form'),
       ),
-      body: Padding(
+      body: Obx(() => Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: controller.formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
-              // Service Type
-              Text('Service Type'),
+              // Service Type Dropdown
+              Text('Service Type', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
               DropdownButtonFormField<int>(
-                value: controller.serviceType.value,
+                value: controller.serviceTypeId.value,
                 onChanged: (value) {
-                  if (value != null) controller.serviceType.value = value;
+                  if (value != null) controller.serviceTypeId.value = value;
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 ),
                 items: controller.serviceTypes.map((type) {
                   return DropdownMenuItem<int>(
@@ -36,67 +37,115 @@ class ServiceRequestForm extends StatelessWidget {
                     child: Text(type.name),
                   );
                 }).toList(),
+                validator: (value) => value == null ? 'Please select a service type' : null,
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
 
-              // Appointment Date
-              Text('Appointment Date'),
+              // Mechanic Dropdown
+              Text('Select Mechanic', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              DropdownButtonFormField<int>(
+                value: controller.mechanicId.value,
+                onChanged: (value) {
+                  if (value != null) controller.mechanicId.value = value;
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                ),
+                items: controller.mechanics.map((mechanic) {
+                  return DropdownMenuItem<int>(
+                    value: mechanic.id,
+                    child: Text(mechanic.name),
+                  );
+                }).toList(),
+                validator: (value) => value == null ? 'Please select a mechanic' : null,
+              ),
+              SizedBox(height: 20),
+
+              // Date Picker
+              Text('Appointment Date', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
               TextFormField(
                 readOnly: true,
                 controller: TextEditingController(
-                  text: DateFormat('yyyy-MM-dd').format(controller.appointmentTime.value),
+                  text: DateFormat('dd/MM/yyyy').format(controller.date.value),
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Select a date',
+                  hintText: 'Select date',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  suffixIcon: Icon(Icons.calendar_today),
                 ),
                 onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
+                  final pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: controller.appointmentTime.value,
+                    initialDate: controller.date.value,
                     firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
+                    lastDate: DateTime.now().add(Duration(days: 365)),
                   );
                   if (pickedDate != null) {
-                    controller.appointmentTime.value = pickedDate;
+                    controller.date.value = pickedDate;
                   }
                 },
+                validator: (value) => value?.isEmpty ?? true ? 'Please select a date' : null,
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
 
-              // Mechanics
-              Text('Mechanic'),
-              DropdownButtonFormField<int>(
-                value: controller.selectedMechanic.value,
-                onChanged: (value) {
-                  if (value != null) controller.selectedMechanic.value = value;
-                },
+              // Time Picker
+              Text('Appointment Time', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              TextFormField(
+                readOnly: true,
+                controller: timeController..text = controller.time.value,
                 decoration: InputDecoration(
+                  hintText: 'Select time',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  suffixIcon: Icon(Icons.access_time),
                 ),
-                items: controller.mechanics.map((mech) {
-                  return DropdownMenuItem<int>(
-                    value: mech.id,
-                    child: Text(mech.name),
+                onTap: () async {
+                  final timeOfDay = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+                        child: child!,
+                      );
+                    },
                   );
-                }).toList(),
+                  if (timeOfDay != null) {
+                    final formattedTime = timeOfDay.format(context);
+                    controller.time.value = formattedTime;
+                    timeController.text = formattedTime;
+                  }
+                },
+                validator: (value) => value?.isEmpty ?? true ? 'Please select a time' : null,
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 30),
 
               // Submit Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: controller.submitServiceRequest,
-                  child: Text('Submit Request'),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
+                onPressed: () {
+                  if (controller.formKey.currentState!.validate()) {
+                    controller.submitServiceRequest();
+                  }
+                },
+                child: controller.isLoading.value
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text('Submit Request', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }

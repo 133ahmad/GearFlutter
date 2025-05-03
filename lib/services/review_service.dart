@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:gear/models/review_model.dart';
 
 class ReviewService {
-  final String apiUrl = 'http://127.0.0.1:8000/api/';
+  final String apiUrl = 'http://192.168.0.102:8000/api';
 
   // Fetch reviews
   Future<List<Review>> fetchReviews(int customerId) async {
