@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gear/controllers/auth_controller.dart';
 import 'package:gear/routes/AppRoute.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthController authController = Get.put(AuthController());
+  final AuthController authController = Get.put(AuthController(httpClient:http.Client()));
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {

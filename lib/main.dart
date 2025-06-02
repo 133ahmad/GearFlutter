@@ -11,143 +11,58 @@ import 'package:gear/controllers/parts_controller.dart';
 import 'package:gear/controllers/scheduleHistory_controller.dart';
 import 'package:gear/controllers/schedule_response_controller.dart';
 import 'package:gear/controllers/servicerequest_controller.dart';
+import 'package:gear/controllers/orders_controller.dart';
 import 'package:gear/services/mechanic_service.dart';
-import 'package:gear/views/login.dart';
-import 'package:gear/views/home_screen.dart';
-import 'package:gear/views/Mechanic_home.dart';
-import 'package:gear/views/Registration_customer.dart';
-import 'package:gear/views/Registration_mechanic.dart';
-import 'package:gear/views/ServiceRequestScreen.dart';
-import 'package:gear/views/EmergencyRequest.dart';
-import 'package:gear/views/MyOrders.dart';
-import 'package:gear/views/OrderScreen.dart';
-import 'package:gear/views/schedule_history.dart';
-import 'package:gear/views/Customer_chat.dart';
-import 'package:gear/views/Mechanic_chat.dart';
-import 'package:gear/views/Mycar.dart';
-import 'package:gear/views/assigned_job.dart';
-import 'package:gear/views/mechanic_schedule.dart';
-import 'package:gear/views/ServiceResponse.dart';
-import 'package:gear/views/carParts.dart';
-import 'package:gear/views/EmergencyRespond.dart';
-import 'package:gear/views/mechanicProfile.dart';
 import 'package:gear/services/api_service.dart';
-import 'controllers/orders_controller.dart';
+import 'package:http/http.dart' as http;
 import 'routes/AppRoute.dart';
 
-void main() async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Show splash screen immediately
-  runApp(const SplashScreen());
-
   try {
-    // Initialize storage first
+    // Initialize storage and services
     await GetStorage.init();
-
-    // Initialize essential services in parallel
-    await Future.wait([
-      StorageHelper().init(),
-      ApiService().onInit(),
-    ]);
+    await StorageHelper().init();
+    await ApiService().onInit();
 
     // Initialize controllers
     _initializeControllers();
 
-    // Replace splash with main app
     runApp(const MyApp());
   } catch (e) {
-    // Handle initialization errors
-    runApp(ErrorApp(error: e.toString()));
+    runApp(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Text('Initialization failed: ${e.toString()}'),
+          ),
+        ),
+      ),
+    );
   }
 }
 
 void _initializeControllers() {
-  // Essential controllers that need to be available immediately
-  Get.put(AuthController());
+  Get.put(AuthController(httpClient: http.Client()));
   Get.put(MechanicService());
   Get.put(ApiService());
-  // Permanent controllers
   Get.put(PartsController(), permanent: true);
   Get.put(MyOrdersController(), permanent: true);
   Get.put(ServiceRequestController(), permanent: true);
-
-  // Other controllers
   Get.put(EditProfileController());
-  Get.put(LocationController());
+
+  // Initialize LocationController with error handling
+  try {
+    Get.put(LocationController(), permanent: true);
+  } catch (e) {
+    Get.log('LocationController initialization error: $e');
+  }
+
   Get.put(ScheduleHistoryController());
   Get.put(ScheduleResponseController());
   Get.put(OrdersController());
-}
-
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.blue, // Customize as needed
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const FlutterLogo(size: 100), // Replace with your app logo
-              const SizedBox(height: 20),
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Loading...',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ErrorApp extends StatelessWidget {
-  final String error;
-
-  const ErrorApp({Key? key, required this.error}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 50, color: Colors.red),
-                const SizedBox(height: 20),
-                const Text(
-                  'Initialization Error',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(error),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => main(),
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -162,46 +77,67 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: AppRoute.login,
-      getPages: _getAppPages(),
-    );
+      initialRoute: AppRoute.splash,
+      getPages: AppRoute.pages,);
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
   }
 
-  List<GetPage> _getAppPages() {
-    return [
-      GetPage(name: AppRoute.login, page: () => LoginPage()),
-      GetPage(name: AppRoute.registerCustomer, page: () => RegisterCustomerPage()),
-      GetPage(name: AppRoute.registerMechanic, page: () => RegisterMechanicPage()),
-      GetPage(name: AppRoute.home, page: () => HomeScreen()),
-      GetPage(name: AppRoute.mechanic, page: () => MechanicHomeScreen()),
-      GetPage(name: AppRoute.serviceRequests, page: () => ServiceRequestForm()),
-      GetPage(name: AppRoute.emergency, page: () => EmergencyRequestScreen()),
-      GetPage(name: AppRoute.myOrders, page: () => MyOrdersScreen()),
-      GetPage(name: AppRoute.orders, page: () => OrdersScreen()),
-      GetPage(name: AppRoute.scheduleHistory, page: () => ScheduleHistoryScreen()),
-      GetPage(name: AppRoute.customerChat, page: () => CustomerChatScreen()),
-      GetPage(name: AppRoute.mechanicChat, page: () => MechanicChatScreen()),
-      GetPage(name: AppRoute.myCar, page: () => AddCarScreen()),
-      GetPage(name: AppRoute.editProfile, page: () => EditProfileScreen()),
+  Future<void> _initializeApp() async {
+    try {
+      // Check login status
+      final authController = Get.find<AuthController>();
+      final isLoggedIn = await authController.checkLoginStatus();
 
-      GetPage(
-        name: AppRoute.assignedJobs,
-        page: () {
-          final mechanicIdParam = Get.parameters['mechanicId'];
-          if (mechanicIdParam != null) {
-            final mechanicId = int.tryParse(mechanicIdParam) ?? 0;
-            return AssignedJobsScreen(mechanicId: mechanicId);
-          }
-          final fallbackId = Get.find<AuthController>().currentMechanicId.value ?? 0;
-          return AssignedJobsScreen(mechanicId: fallbackId);
-        },
+      // Get location if logged in
+      if (isLoggedIn) {
+        try {
+          await Get.find<LocationController>().fetchLocation();
+        } catch (e) {
+          Get.log('Location fetch error: $e');
+        }
+      }
+
+      // Navigate to appropriate screen
+      Get.offNamed(isLoggedIn ? AppRoute.home : AppRoute.login);
+    } catch (e) {
+      Get.offNamed(AppRoute.login);
+      Get.snackbar('Error', 'Initialization failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const FlutterLogo(size: 100),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            const SizedBox(height: 20),
+            const Text('Loading...',
+                style: TextStyle(color: Colors.white, fontSize: 16)),
+          ],
+        ),
       ),
-      GetPage(name: AppRoute.mechanicSchedule, page: () => MechanicScheduleScreen()),
-      GetPage(name: AppRoute.serviceResponse, page: () => ServiceResponseScreen()),
-      GetPage(name: AppRoute.carParts, page: () => CarPartsScreen()),
-      GetPage(name: AppRoute.emergencyResponse, page: () => EmergencyRespondScreen()),
-      GetPage(name: AppRoute.mechanicProfile, page: () => MechanicProfileScreen()),
-
-    ];
+    );
   }
 }

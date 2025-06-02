@@ -1,49 +1,59 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gear/views/EmergencyRequest.dart';
-import 'package:gear/views/ServiceRequestScreen.dart';
-import 'package:gear/views/registration_customer.dart';
-import 'package:gear/views/login.dart';
-import 'package:gear/views/home_screen.dart';
-import 'package:gear/views/mechanic_home.dart';
-import 'package:gear/views/EditProfileScreen.dart';
-import 'package:gear/views/OrderScreen.dart';
-import 'package:gear/views/MyOrders.dart';
-import 'package:gear/views/schedule_history.dart';
-import 'package:gear/views/Mechanic_chat.dart';
-import 'package:gear/views/Mycar.dart';
-import 'package:gear/views/Customer_chat.dart';
-import 'package:gear/views/assigned_job.dart';
-import 'package:gear/views/mechanic_schedule.dart';
-import 'package:gear/views/EmergencyRespond.dart';
-import 'package:gear/views/carParts.dart';
-import 'package:gear/views/ServiceResponse.dart';
-import 'package:gear/views/mechanicProfile.dart';
-import 'package:gear/views/Registration_mechanic.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
+
+import '../main.dart';
+import '../views/Customer_chat.dart';
+import '../views/EditProfileScreen.dart';
+import '../views/EmergencyRequest.dart';
+import '../views/EmergencyRespond.dart';
+import '../views/Mechanic_chat.dart';
+import '../views/Mechanic_home.dart';
+import '../views/MyOrders.dart';
+import '../views/Mycar.dart';
+import '../views/OrderScreen.dart';
+import '../views/Registration_customer.dart';
+import '../views/Registration_mechanic.dart';
+import '../views/ServiceRequestScreen.dart';
+import '../views/ServiceResponse.dart';
+import '../views/assigned_job.dart';
+import '../views/carParts.dart';
+import '../views/home_screen.dart';
+import '../views/login.dart';
+import '../views/mechanicProfile.dart';
+import '../views/mechanic_schedule.dart';
+import '../views/schedule_history.dart';
 
 class AppRoute {
-  static const String registrationCustomer = '/registration_customer';
-  static const String registrationMechanic = '/registration_mechanic';
+  // Route names
+  static const String splash = '/splash';
+  static const String registrationCustomer = '/registration-customer';
+  static const String registrationMechanic = '/registration-mechanic';
   static const String login = '/login';
   static const String home = '/home';
   static const String mechanic = '/mechanic';
-  static const String serviceRequests = '/service_requests';
-  static const String customerChat = '/customerChat';
-  static const String mechanicChat = '/mechanicChat';
-  static const String editProfile = '/editProfile';
+  static const String serviceRequests = '/service-requests';
+  static const String customerChat = '/customer-chat';
+  static const String mechanicChat = '/mechanic-chat';
+  static const String editProfile = '/edit-profile';
   static const String emergency = '/emergency';
-  static const String myOrders = '/myOrders';
+  static const String myOrders = '/my-orders';
   static const String orders = '/orders';
-  static const String scheduleHistory = '/schedule_history';
-  static const String myCar = '/myCar';
-  static const String assignedJobs = '/assignedJobs';
-  static const String mechanicSettings = '/mechanicSettings';
-  static const String mechanicSchedule = '/mechanicSchedule';
-  static const String emergencyResponse='/emergencyResponse';
-  static const String serviceResponse='/serviceResponse';
-  static const String carParts='/carParts';
-  static const String mechanicProfile='/mechanicProfile';
+  static const String scheduleHistory = '/schedule-history';
+  static const String myCar = '/my-car';
+  static const String assignedJobs = '/assigned-jobs';
+  static const String mechanicSettings = '/mechanic-settings';
+  static const String mechanicSchedule = '/mechanic-schedule';
+  static const String emergencyResponse = '/emergency-response';
+  static const String serviceResponse = '/service-response';
+  static const String carParts = '/car-parts';
+  static const String mechanicProfile = '/mechanic-profile';
+
+  // Route definitions
   static final List<GetPage> pages = [
+    GetPage(name: splash, page: () => SplashScreen()),
     GetPage(name: registrationCustomer, page: () => RegisterCustomerPage()),
     GetPage(name: registrationMechanic, page: () => RegisterMechanicPage()),
     GetPage(name: login, page: () => LoginPage()),
@@ -58,22 +68,19 @@ class AppRoute {
     GetPage(name: orders, page: () => OrdersScreen()),
     GetPage(name: scheduleHistory, page: () => ScheduleHistoryScreen()),
     GetPage(name: myCar, page: () => AddCarScreen()),
-    GetPage(name: AppRoute.assignedJobs,
+    GetPage(
+      name: assignedJobs,
       page: () {
         final mechanicId = int.tryParse(Get.parameters['mechanicId'] ?? '');
-        if (mechanicId == null) {
-          return Scaffold(
-            body: Center(child: Text('Mechanic ID is required')),
-          );
-        }
-        return AssignedJobsScreen(mechanicId: mechanicId);
+        return mechanicId != null
+            ? AssignedJobsScreen(mechanicId: mechanicId)
+            : Scaffold(body: Center(child: Text('Mechanic ID is required')));
       },
     ),
-    GetPage(name: AppRoute.mechanicSchedule, page: () => MechanicScheduleScreen(),),
-    GetPage(name: AppRoute.emergencyResponse, page: () => EmergencyRespondScreen(),),
-    GetPage(name: AppRoute.serviceResponse, page: () => ServiceResponseScreen(),),
-    GetPage(name: AppRoute.carParts, page: () => CarPartsScreen(),),
-    GetPage(name: AppRoute.mechanicProfile, page: () => MechanicProfileScreen(),),
+    GetPage(name: mechanicSchedule, page: () => MechanicScheduleScreen()),
+    GetPage(name: emergencyResponse, page: () => EmergencyRespondScreen()),
+    GetPage(name: serviceResponse, page: () => ServiceResponseScreen()),
+    GetPage(name: carParts, page: () => CarPartsScreen()),
+    GetPage(name: mechanicProfile, page: () => MechanicProfileScreen()),
   ];
 }
-

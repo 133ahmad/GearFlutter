@@ -9,6 +9,7 @@ import 'package:gear/controllers/car_controller.dart';
 import 'package:gear/controllers/location_controller.dart';
 import 'package:gear/services/mechanic_service.dart';
 
+
 import '../models/car_model.dart';
 
 class MechanicHomeScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MechanicHomeScreenState extends State<MechanicHomeScreen> {
   @override
   void initState() {
     super.initState();
-    // You can fetch mechanic data if needed, e.g., from an API
+    locationController.fetchLocation(); // Fetch location on startup
   }
 
   @override
